@@ -1,0 +1,608 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Aptitude Quiz</title>
+    <link rel="stylesheet" href="{% static 'css/career_aptitude_quiz.css' %}">
+    <style>
+        .interest-result { margin-top: 25px; margin-bottom: 35px; }
+        .overall-result { margin-bottom: 35px; }
+        .performance-message { margin-top: 25px; margin-bottom: 45px; }
+        .ai-result-section { margin-top: 20px; }
+        .ai-result-block { margin-bottom: 40px; }
+        .ai-result-block h3 { margin-bottom: 15px; }
+        .ai-result-block p { line-height: 1.8; }
+        .question-results { margin-top: 20px; }
+        .question-result-item { margin-bottom: 25px; padding: 18px; }
+        .question-result-item strong { display: block; margin-bottom: 10px; }
+        .question-result-item small { display: block; margin-top: 7px; line-height: 1.6; }
+        #strengthsResult div,
+        #interestsResult div,
+        #careerAreasResult div { margin-bottom: 12px; line-height: 1.6; }
+        .result-actions { margin-top: 40px; }
+    </style>
+</head>
+
+<body data-authenticated="{{ request.user.is_authenticated|lower }}">
+    <div class="quiz-page">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1>Career Aptitude Quiz</h1>
+                    <p>Answer the questions to discover your strengths, interests and suitable career areas.</p>
+                </div>
+                <div class="question-count">
+                    Question <span id="questionNumber">1</span> /
+                    <span id="totalQuestions">--</span>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="interestSection" class="interest-section">
+                <h2>Tell Us About Your Interest</h2>
+                <p class="interest-description">
+                    Enter your subject, field, or area of interest to start your personalized quiz.
+                </p>
+                <input
+                    type="text"
+                    id="interestInput"
+                    class="interest-input"
+                    placeholder="e.g. Python, AI, Web Development"
+                    autocomplete="off"
+                >
+                <button
+                    type="button"
+                    id="startQuizButton"
+                    class="start-quiz-button"
+                    onclick="startQuiz()">
+                    Start Quiz →
+                </button>
+                <p id="interestError" class="interest-error"></p>
+            </div>
+            <div id="loadingBox" class="loading-box" style="display: none;">
+                <div class="loader"></div>
+                <p id="loadingMessage">Preparing your personalized aptitude quiz...</p>
+            </div>
+            <div id="quizContent" class="quiz-content" style="display: none;">
+                <h2 id="questionText">Question will appear here.</h2>
+                <div id="optionsContainer" class="options-container"></div>
+                <p id="quizError" class="quiz-error"></p>
+                <div class="navigation-buttons">
+                    <button
+                        type="button"
+                        id="previousButton"
+                        class="quiz-nav-button previous-button"
+                        onclick="previousQuestion()"
+                        disabled>
+                        ← Previous
+                    </button>
+                    <button
+                        type="button"
+                        id="nextButton"
+                        class="quiz-nav-button next-button"
+                        onclick="nextQuestion()"
+                        disabled>
+                        Next →
+                    </button>
+                </div>
+            </div>
+            <div id="resultBox" class="result-box" style="display: none;">
+                <div class="result-icon">✓</div>
+                <h2>Career Aptitude Result</h2>
+                <p id="resultText" style="margin-bottom: 30px;">
+                    Your aptitude quiz has been completed based on your selected subject.
+                </p>
+                <div class="interest-result">
+                    <strong>Interest Area:</strong>
+                    <span id="resultInterest">-</span>
+                </div>
+                <div class="overall-result">
+                    <div class="score-item">
+                        <span class="score-label">Overall Score</span>
+                        <span id="scoreValue" class="score-value">0 / 0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Percentage</span>
+                        <span id="percentageValue" class="score-value">0%</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Total Questions</span>
+                        <span id="totalQuestionsResult" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Correct Answers</span>
+                        <span id="correctValue" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Wrong Answers</span>
+                        <span id="wrongValue" class="score-value">0</span>
+                    </div>
+                </div>
+                <div id="performanceMessage" class="performance-message"></div>
+                <div class="ai-result-section">
+                    <div class="ai-result-block">
+                        <h3>Overall Result</h3>
+                        <p id="overallResult">-</p>
+                    </div>
+                    <div class="ai-result-block">
+                        <h3>Your Strengths</h3>
+                        <div id="strengthsResult"></div>
+                    </div>
+                    <div class="ai-result-block">
+                        <h3>Your Interests</h3>
+                        <div id="interestsResult"></div>
+                    </div>
+                    <div class="ai-result-block">
+                        <h3>Suitable Career Areas</h3>
+                        <div id="careerAreasResult"></div>
+                    </div>
+                    <div class="ai-result-block">
+                        <h3>Overall Analysis</h3>
+                        <p id="analysisResult">-</p>
+                    </div>
+                </div>
+                <div class="ai-result-block" style="margin-top: 10px;">
+                    <h3>Question-wise Result</h3>
+                    <div id="questionResults" class="question-results"></div>
+                </div>
+                <div class="result-actions">
+                    <button type="button" class="restart-button" onclick="restartQuiz()">
+                        Take Quiz Again
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="back-button-container">
+            <a href="/#features" class="back-button">← Back to Features</a>
+        </div>
+    </div>
+<script>
+    // AUTHENTICATION
+    const isAuthenticated =
+        document.body.dataset.authenticated === "true";
+    const loginUrl = "{% url 'login' %}";
+    const quizUrl = "{% url 'career_aptitude_quiz' %}";
+    const quizApiUrl = "{% url 'career_aptitude_api' %}";
+
+    function requireLogin() {
+        if (!isAuthenticated) {
+            window.location.href =
+                loginUrl + "?next=" + encodeURIComponent(quizUrl);
+            return false;
+        }
+        return true;
+    }
+
+    // GLOBAL VARIABLES
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let answers = [];
+    let selectedAnswer = null;
+    let quizLoaded = false;
+    let quizFinished = false;
+    let userInterest = "";
+
+    // REDIRECT WHEN USER FOCUSES THE INTEREST INPUT
+    document.getElementById("interestInput").addEventListener("focus", function () {
+        requireLogin();
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        showLoading(false);
+    });
+
+    // START QUIZ
+    async function startQuiz() {
+        if (!requireLogin()) return;
+        const input = document.getElementById("interestInput");
+        const error = document.getElementById("interestError");
+        userInterest = input.value.trim();
+
+        if (!userInterest) {
+            error.textContent = "Please enter your subject, field, or interest.";
+            input.focus();
+            return;
+        }
+
+        error.textContent = "";
+        questions = [];
+        answers = [];
+        currentQuestionIndex = 0;
+        selectedAnswer = null;
+        quizLoaded = false;
+        quizFinished = false;
+        document.getElementById("resultBox").style.display = "none";
+        document.getElementById("interestSection").style.display = "none";
+        await loadQuiz();
+    }
+
+    // LOAD QUIZ
+    async function loadQuiz() {
+        if (!requireLogin()) return;
+        showLoading(true, "Preparing your personalized aptitude quiz...");
+
+        try {
+            const response = await fetch(quizApiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "generate",
+                    subject: userInterest,
+                    interest: userInterest
+                })
+            });
+            const data = await response.json();
+
+            if (response.status === 401) {
+                window.location.href = data.redirect_url ||
+                    (loginUrl + "?next=" + encodeURIComponent(quizUrl));
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(data.error || "Unable to load the aptitude quiz.");
+            }
+
+            if (!Array.isArray(data.questions) || data.questions.length === 0) {
+                throw new Error("No aptitude questions received.");
+            }
+
+            questions = data.questions.slice(0, 10);
+            answers = new Array(questions.length).fill(null);
+            currentQuestionIndex = 0;
+            selectedAnswer = null;
+            quizLoaded = true;
+            quizFinished = false;
+            document.getElementById("totalQuestions").textContent = questions.length;
+            document.getElementById("quizContent").style.display = "block";
+            document.getElementById("quizError").textContent = "";
+            showQuestion();
+        } catch (error) {
+            console.error("Career Aptitude Quiz Error:", error);
+            document.getElementById("interestSection").style.display = "block";
+            document.getElementById("interestError").textContent = error.message;
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // SHOW CURRENT QUESTION
+    function showQuestion() {
+        if (!quizLoaded) return;
+        const currentQuestion = questions[currentQuestionIndex];
+        if (!currentQuestion) return;
+        selectedAnswer = answers[currentQuestionIndex];
+        document.getElementById("questionNumber").textContent =
+            currentQuestionIndex + 1;
+        document.getElementById("questionText").textContent =
+            currentQuestion.question;
+        renderOptions(currentQuestion.options);
+        updateProgress();
+        document.getElementById("previousButton").disabled =
+            currentQuestionIndex === 0;
+        const nextButton = document.getElementById("nextButton");
+        nextButton.textContent =
+            currentQuestionIndex === questions.length - 1
+                ? "Finish Quiz"
+                : "Next →";
+        nextButton.disabled = selectedAnswer === null;
+    }
+
+    // RENDER OPTIONS
+    function renderOptions(options) {
+        const container = document.getElementById("optionsContainer");
+        container.innerHTML = "";
+        if (!Array.isArray(options)) return;
+
+        options.slice(0, 4).forEach(function (option) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "option-button";
+            button.textContent = option;
+
+            if (selectedAnswer === option) {
+                button.classList.add("selected");
+            }
+
+            button.addEventListener("click", function () {
+                selectOption(button, option);
+            });
+            container.appendChild(button);
+        });
+    }
+
+    // SELECT OPTION
+    function selectOption(button, answer) {
+        const allOptions = document.querySelectorAll(".option-button");
+        allOptions.forEach(function (option) {
+            option.classList.remove("selected");
+        });
+        button.classList.add("selected");
+        selectedAnswer = answer;
+        answers[currentQuestionIndex] = answer;
+        document.getElementById("nextButton").disabled = false;
+        document.getElementById("quizError").textContent = "";
+    }
+
+    // NEXT QUESTION
+    function nextQuestion() {
+        if (!requireLogin()) return;
+        if (!quizLoaded) return;
+
+        if (
+            selectedAnswer === null ||
+            selectedAnswer === undefined ||
+            selectedAnswer === ""
+        ) {
+            document.getElementById("quizError").textContent =
+                "Please select an option first.";
+            return;
+        }
+
+        answers[currentQuestionIndex] = selectedAnswer;
+
+        if (currentQuestionIndex >= questions.length - 1) {
+            finishQuiz();
+            return;
+        }
+
+        currentQuestionIndex++;
+        selectedAnswer = answers[currentQuestionIndex];
+        showQuestion();
+    }
+
+    // PREVIOUS QUESTION
+    function previousQuestion() {
+        if (!requireLogin()) return;
+        if (currentQuestionIndex <= 0) return;
+        currentQuestionIndex--;
+        selectedAnswer = answers[currentQuestionIndex];
+        showQuestion();
+    }
+
+    // UPDATE PROGRESS
+    function updateProgress() {
+        if (!questions.length) return;
+        const progress =
+            ((currentQuestionIndex + 1) / questions.length) * 100;
+        document.getElementById("progressBar").style.width =
+            progress + "%";
+    }
+
+    // FINISH QUIZ
+    async function finishQuiz() {
+        if (!requireLogin()) return;
+        if (quizFinished) return;
+        quizFinished = true;
+        answers[currentQuestionIndex] = selectedAnswer;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let scoredQuestions = 0;
+
+        questions.forEach(function (question, index) {
+            const userAnswer = answers[index];
+            const correctAnswer = question.correct_answer;
+
+            if (
+                correctAnswer !== undefined &&
+                correctAnswer !== null &&
+                String(correctAnswer).trim() !== ""
+            ) {
+                scoredQuestions++;
+
+                if (
+                    String(userAnswer).trim().toLowerCase() ===
+                    String(correctAnswer).trim().toLowerCase()
+                ) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            }
+        });
+
+        const total = questions.length;
+
+        // CALCULATE SCORE FOR QUESTIONS WITH ANSWER KEYS
+        const percentage = scoredQuestions > 0
+            ? Math.round((correctCount / scoredQuestions) * 100)
+            : 0;
+        document.getElementById("quizContent").style.display = "none";
+        document.getElementById("interestSection").style.display = "none";
+        document.querySelector(".progress-container").style.display = "none";
+        document.querySelector(".question-count").style.display = "none";
+        document.getElementById("resultBox").style.display = "block";
+        document.getElementById("resultInterest").textContent = userInterest;
+        document.getElementById("scoreValue").textContent =
+            correctCount + " / " + scoredQuestions;
+        document.getElementById("percentageValue").textContent = percentage + "%";
+        document.getElementById("totalQuestionsResult").textContent = total;
+        document.getElementById("correctValue").textContent = correctCount;
+        document.getElementById("wrongValue").textContent = wrongCount;
+        let performance = "Needs Improvement!";
+
+        if (percentage >= 80) {
+            performance = "Excellent Performance!";
+        } else if (percentage >= 60) {
+            performance = "Good Performance!";
+        } else if (percentage >= 40) {
+            performance = "Average Performance!";
+        }
+
+        if (scoredQuestions === 0) {
+            performance = "Quiz completed!";
+        }
+
+        document.getElementById("performanceMessage").textContent = performance;
+        document.getElementById("resultText").textContent =
+            "Your aptitude quiz has been completed based on your selected subject.";
+        document.getElementById("overallResult").textContent =
+            "Analyzing your responses...";
+        document.getElementById("analysisResult").textContent =
+            "Generating your personalized career analysis...";
+
+        try {
+            const response = await fetch(quizApiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: "analyze",
+                    subject: userInterest,
+                    interest: userInterest,
+                    questions: questions,
+                    answers: answers
+                })
+            });
+            const data = await response.json();
+
+            if (response.status === 401) {
+                window.location.href = data.redirect_url ||
+                    (loginUrl + "?next=" + encodeURIComponent(quizUrl));
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(data.error || "Unable to generate AI analysis.");
+            }
+
+            document.getElementById("overallResult").textContent =
+                data.overall_result || "No overall result available.";
+            renderList("strengthsResult", data.strengths, "✓ ");
+            renderList("interestsResult", data.interests, "• ");
+            renderList("careerAreasResult", data.career_areas, "→ ");
+            document.getElementById("analysisResult").textContent =
+                data.analysis || "No analysis available.";
+        } catch (error) {
+            console.error("Career Aptitude Analysis Error:", error);
+            document.getElementById("overallResult").textContent =
+                "AI analysis could not be generated right now.";
+            document.getElementById("analysisResult").textContent =
+                error.message;
+        }
+
+        showQuestionResults();
+    }
+
+    // RENDER RESULT LISTS
+    function renderList(elementId, items, prefix) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = "";
+        if (!Array.isArray(items)) return;
+
+        items.forEach(function (item) {
+            const div = document.createElement("div");
+            div.textContent = prefix + item;
+            container.appendChild(div);
+        });
+    }
+
+    // QUESTION-WISE RESULTS
+    function showQuestionResults() {
+        const container = document.getElementById("questionResults");
+        container.innerHTML = "";
+
+        questions.forEach(function (question, index) {
+            const userAnswer = answers[index];
+            const correctAnswer = question.correct_answer;
+            const resultItem = document.createElement("div");
+            resultItem.className = "question-result-item";
+            const heading = document.createElement("strong");
+            heading.textContent = "Q" + (index + 1);
+            const userAnswerText = document.createElement("small");
+            userAnswerText.textContent =
+                "Your Answer: " + (userAnswer || "Not answered");
+            resultItem.appendChild(heading);
+            resultItem.appendChild(userAnswerText);
+
+            if (
+                correctAnswer !== undefined &&
+                correctAnswer !== null &&
+                String(correctAnswer).trim() !== ""
+            ) {
+                const isCorrect =
+                    String(userAnswer).trim().toLowerCase() ===
+                    String(correctAnswer).trim().toLowerCase();
+                heading.textContent += isCorrect ? " ✓ Correct" : " ✗ Wrong";
+                resultItem.classList.add(isCorrect ? "correct" : "wrong");
+
+                if (!isCorrect) {
+                    const correctText = document.createElement("small");
+                    correctText.textContent = "Correct Answer: " + correctAnswer;
+                    resultItem.appendChild(correctText);
+                }
+            } else {
+                const unavailableText = document.createElement("small");
+                unavailableText.textContent =
+                    "Correct answer was not provided by the API.";
+                resultItem.appendChild(unavailableText);
+            }
+
+            container.appendChild(resultItem);
+        });
+    }
+
+    // RESTART QUIZ
+    function restartQuiz() {
+        if (!requireLogin()) return;
+        questions = [];
+        answers = [];
+        currentQuestionIndex = 0;
+        selectedAnswer = null;
+        quizLoaded = false;
+        quizFinished = false;
+        document.getElementById("overallResult").textContent = "-";
+        document.getElementById("analysisResult").textContent = "-";
+        document.getElementById("strengthsResult").innerHTML = "";
+        document.getElementById("interestsResult").innerHTML = "";
+        document.getElementById("careerAreasResult").innerHTML = "";
+        document.getElementById("questionResults").innerHTML = "";
+        document.getElementById("resultBox").style.display = "none";
+        document.getElementById("quizContent").style.display = "none";
+        document.getElementById("interestSection").style.display = "block";
+        document.getElementById("interestInput").value = userInterest;
+        document.getElementById("interestError").textContent = "";
+        document.getElementById("quizError").textContent = "";
+        document.getElementById("progressBar").style.width = "0%";
+        document.querySelector(".progress-container").style.display = "block";
+        document.querySelector(".question-count").style.display = "block";
+        document.getElementById("nextButton").textContent = "Next →";
+        document.getElementById("nextButton").disabled = true;
+        document.getElementById("previousButton").disabled = true;
+    }
+
+    // LOADING
+    function showLoading(
+        show,
+        message = "Preparing your personalized aptitude quiz..."
+    ) {
+        const loadingBox = document.getElementById("loadingBox");
+        const quizContent = document.getElementById("quizContent");
+        const loadingMessage = document.getElementById("loadingMessage");
+
+        if (loadingMessage) {
+            loadingMessage.textContent = message;
+        }
+
+        if (show) {
+            loadingBox.style.display = "flex";
+            quizContent.style.display = "none";
+        } else {
+            loadingBox.style.display = "none";
+
+            if (!quizLoaded) {
+                quizContent.style.display = "none";
+            }
+        }
+    }
+</script>
+</body>
+</html>
+

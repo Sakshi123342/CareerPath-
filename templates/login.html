@@ -1,0 +1,374 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CareerPath</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f3ff, #ffffff);
+            min-height: 100vh;
+            padding: 25px 7%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 35px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(71, 52, 123, 0.08);
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #5b21b6;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #5b21b6;
+            font-weight: 600;
+        }
+
+        .home-link:hover {
+            color: #7c3aed;
+        }
+
+        /* Main Container */
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px;
+            max-width: 1150px;
+            width: 100%;
+            margin: 50px auto;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .welcome-tag {
+            display: inline-block;
+            background: #ede9fe;
+            color: #6d28d9;
+            padding: 9px 17px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 22px;
+        }
+
+        .welcome-section h1 {
+            font-size: 43px;
+            line-height: 1.25;
+            color: #312e81;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section h1 span {
+            color: #7c3aed;
+        }
+
+        .welcome-section p {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .welcome-points {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+            color: #4b5563;
+            font-size: 15px;
+        }
+
+        .welcome-points div {
+            background: #ffffff;
+            padding: 13px 17px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(71, 52, 123, 0.06);
+        }
+
+        /* Login Card */
+        .login-card {
+            width: 100%;
+            max-width: 430px;
+            background: #ffffff;
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(71, 52, 123, 0.12);
+            text-align: center;
+        }
+
+        .login-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ede9fe;
+            border-radius: 50%;
+            font-size: 30px;
+        }
+
+        .login-card h2 {
+            color: #4c1d95;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        /* Messages */
+        .message {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        /* Form */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1.5px solid #ddd6fe;
+            border-radius: 9px;
+            font-size: 14px;
+            outline: none;
+            background: #fafaff;
+            transition: 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #7c3aed;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #6d28d9, #8b5cf6);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(90deg, #5b21b6, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(109, 40, 217, 0.2);
+        }
+
+        .register-text {
+            margin-top: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .register-text a {
+            color: #6d28d9;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+            padding: 20px 0 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .login-container {
+                flex-direction: column;
+                gap: 35px;
+                margin: 40px auto;
+            }
+
+            .welcome-section {
+                max-width: 500px;
+                width: 100%;
+            }
+
+            .welcome-section h1 {
+                font-size: 35px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 15px;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .login-card {
+                padding: 30px 22px;
+            }
+
+            .welcome-section h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">🎓 CareerPath</a>
+        <a href="/" class="home-link">Back to Home</a>
+    </header>
+
+    <main class="login-container">
+
+        <section class="welcome-section">
+            <span class="welcome-tag">WELCOME BACK</span>
+
+            <h1>
+                Continue Your
+                <br>
+                <span>Career Journey</span>
+            </h1>
+
+            <p>
+                Sign in to explore your career recommendations,
+                track your progress and continue planning your future.
+            </p>
+
+            <div class="welcome-points">
+                <div>✓ Explore personalized career paths</div>
+                <div>✓ Continue your learning roadmap</div>
+                <div>✓ Track your career progress</div>
+            </div>
+        </section>
+
+        <section class="login-card">
+
+            <div class="login-icon">👋</div>
+
+            <h2>Welcome Back!</h2>
+
+            <p class="login-subtitle">
+                Please login to your account
+            </p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your registered email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Login to Account →
+                </button>
+            </form>
+
+            <p class="register-text">
+                Don't have an account?
+                <a href="/register/">Create Account</a>
+            </p>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 CareerPath. Build your future with confidence.</p>
+    </footer>
+
+</body>
+</html>

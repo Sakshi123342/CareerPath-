@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job & Internship Recommendation</title>
+    <link rel="stylesheet" href="{% static 'css/job_internship_recommendation.css' %}">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header class="page-header">
+            <div class="header-content">
+                <p class="header-label">CAREERPATH</p>
+                <h1>💼 Job & Internship Recommendation</h1>
+                <p class="header-subtitle">
+                    Find opportunities based on your career interests,
+                    education, skills and experience.
+                </p>
+            </div>
+        </header>
+
+        <main class="main-container">
+            <section class="main-card interest-card">
+                <div class="section-icon">🎯</div>
+                <h2>Tell Us About Your Career Profile</h2>
+                <p class="section-description">
+                    Enter your details to get personalized job
+                    and internship recommendations.
+                </p>
+
+                <!-- INTEREST -->
+                <label for="interestInput" class="input-label">
+                    Your Interest / Career Field
+                </label>
+                <input type="text" id="interestInput" class="interest-input" autocomplete="off">
+                <div id="interestError" class="error-message"></div>
+
+                <!-- SKILLS -->
+                <label for="skillsInput" class="input-label">
+                    Your Skills
+                </label>
+                <input type="text" id="skillsInput" class="interest-input" autocomplete="off">
+                <div id="skillsError" class="error-message"></div>
+
+                <!-- EDUCATION -->
+                <label for="educationInput" class="input-label">
+                    Your Education
+                </label>
+                <input type="text" id="educationInput" class="interest-input" autocomplete="off">
+                <div id="educationError" class="error-message"></div>
+
+                <!-- EXPERIENCE LEVEL -->
+                <label for="experienceInput" class="input-label">
+                    Your Experience Level
+                </label>
+                <select id="experienceInput" class="interest-input">
+                    <option value="">Select your experience level</option>
+                    <option value="fresher">
+                        Fresher / Student
+                    </option>
+                    <option value="internship">
+                        Internship Experience Only
+                    </option>
+                    <option value="0-2">
+                        0–2 Years of Professional Experience
+                    </option>
+                    <option value="2-5">
+                        2–5 Years of Professional Experience
+                    </option>
+                    <option value="5+">
+                        5+ Years of Professional Experience
+                    </option>
+                </select>
+                <div id="experienceError" class="error-message"></div>
+
+                <!-- CONTINUE -->
+                <div class="button-container">
+                    <button type="button" id="continueButton" class="primary-button">
+                        Continue →
+                    </button>
+                </div>
+            </section>
+
+            <!-- BACK -->
+            <div class="back-button-container">
+                <a href="/#features" class="back-button">
+                    ← Back to Features
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // AUTHENTICATION CHECK
+        const isAuthenticated =
+            "{{ request.user.is_authenticated|yesno:'true,false' }}" === "true";
+
+        const loginUrl = "{% url 'login' %}";
+
+        const recommendationUrl =
+            "{% url 'job_internship_recommendation' %}";
+
+        function requireLogin() {
+            if (!isAuthenticated) {
+                window.location.href =
+                    loginUrl + "?next=" +
+                    encodeURIComponent(recommendationUrl);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        // INPUT ELEMENTS
+        const interestInput =
+            document.getElementById("interestInput");
+
+        const skillsInput =
+            document.getElementById("skillsInput");
+
+        const educationInput =
+            document.getElementById("educationInput");
+
+        const experienceInput =
+            document.getElementById("experienceInput");
+
+        // ERROR ELEMENTS
+        const interestError =
+            document.getElementById("interestError");
+
+        const skillsError =
+            document.getElementById("skillsError");
+
+        const educationError =
+            document.getElementById("educationError");
+
+        const experienceError =
+            document.getElementById("experienceError");
+
+        // BUTTON
+        const continueButton =
+            document.getElementById("continueButton");
+
+        // REQUIRE LOGIN WHEN USER FOCUSES A FIELD
+        [
+            interestInput,
+            skillsInput,
+            educationInput,
+            experienceInput
+        ].forEach(function (input) {
+            input.addEventListener("focus", function () {
+                requireLogin();
+            });
+        });
+
+        // CONTINUE TO ANALYSIS
+        function continueToAnalysis() {
+            // Check authentication first
+            if (!requireLogin()) {
+                return;
+            }
+
+            const interest = interestInput.value.trim();
+            const skills = skillsInput.value.trim();
+            const education = educationInput.value.trim();
+            const experience = experienceInput.value.trim();
+
+            // Clear previous errors
+            interestError.textContent = "";
+            skillsError.textContent = "";
+            educationError.textContent = "";
+            experienceError.textContent = "";
+
+            // Validate interest
+            if (!interest) {
+                interestError.textContent =
+                    "Please enter your interest or career field.";
+
+                interestInput.focus();
+                return;
+            }
+
+            // Validate skills
+            if (!skills) {
+                skillsError.textContent =
+                    "Please enter your skills.";
+
+                skillsInput.focus();
+                return;
+            }
+
+            // Validate education
+            if (!education) {
+                educationError.textContent =
+                    "Please enter your education.";
+
+                educationInput.focus();
+                return;
+            }
+
+            // Validate experience
+            if (!experience) {
+                experienceError.textContent =
+                    "Please select your experience level.";
+
+                experienceInput.focus();
+                return;
+            }
+
+            // SAVE INPUTS IN SESSION STORAGE
+            sessionStorage.setItem(
+                "job_internship_interest",
+                interest
+            );
+
+            sessionStorage.setItem(
+                "job_internship_skills",
+                skills
+            );
+
+            sessionStorage.setItem(
+                "job_internship_education",
+                education
+            );
+
+            sessionStorage.setItem(
+                "job_internship_experience",
+                experience
+            );
+
+            // REDIRECT TO ANALYSIS PAGE
+            const analysisURL =
+                "{% url 'job_internship_analysis' %}" +
+                "?interest=" + encodeURIComponent(interest) +
+                "&skills=" + encodeURIComponent(skills) +
+                "&education=" + encodeURIComponent(education) +
+                "&experience=" + encodeURIComponent(experience);
+
+            window.location.href = analysisURL;
+        }
+
+        // CONTINUE BUTTON CLICK
+        continueButton.addEventListener(
+            "click",
+            continueToAnalysis
+        );
+
+        // ENTER KEY FOR TEXT INPUTS
+        [
+            interestInput,
+            skillsInput,
+            educationInput
+        ].forEach(function (input) {
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    continueToAnalysis();
+                }
+            });
+        });
+
+        // CLEAR ERRORS WHILE TYPING
+        interestInput.addEventListener("input", function () {
+            if (interestInput.value.trim()) {
+                interestError.textContent = "";
+            }
+        });
+
+        skillsInput.addEventListener("input", function () {
+            if (skillsInput.value.trim()) {
+                skillsError.textContent = "";
+            }
+        });
+
+        educationInput.addEventListener("input", function () {
+            if (educationInput.value.trim()) {
+                educationError.textContent = "";
+            }
+        });
+
+        experienceInput.addEventListener("change", function () {
+            if (experienceInput.value) {
+                experienceError.textContent = "";
+            }
+        });
+    </script>
+</body>
+
+</html>

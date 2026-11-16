@@ -1,0 +1,374 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f8f7ff;
+    color: #25213f;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    background: #ffffff;
+    border-bottom: 1px solid #eeeafa;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    color: #6c4ce8;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.navbar nav a {
+    color: #55516d;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar nav a:hover {
+    color: #6c4ce8;
+}
+
+/* Main Section */
+main {
+    width: 100%;
+}
+
+.assessment-section {
+    width: 100%;
+    padding: 55px 20px 70px;
+}
+
+.assessment-container {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+/* Heading */
+.assessment-heading {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.step-label {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    background: #eee9ff;
+    color: #6c4ce8;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.assessment-heading h1 {
+    margin: 0 0 12px;
+    color: #25213f;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.assessment-heading p {
+    max-width: 650px;
+    margin: 0 auto;
+    color: #77738c;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Progress */
+.progress-container {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 7px;
+    background: #e5e1ef;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 40%;
+    height: 100%;
+    background: #6c4ce8;
+    border-radius: 20px;
+}
+
+/* Card */
+.assessment-card {
+    width: 100%;
+    padding: 38px 45px;
+    background: #ffffff;
+    border: 1px solid #eeeafa;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(70, 50, 130, 0.08);
+}
+
+/* Card Header */
+.card-header {
+    width: 100%;
+    padding-bottom: 22px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid #eeeafa;
+}
+
+.card-header h2 {
+    margin: 0 0 7px;
+    color: #25213f;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.card-header p {
+    margin: 0;
+    color: #858197;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Form */
+form {
+    width: 100%;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.form-group > label {
+    display: block;
+    width: 100%;
+    margin-bottom: 9px;
+    color: #39344f;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Select */
+.form-group select {
+    display: block;
+    width: 100%;
+    height: 50px;
+    padding: 0 15px;
+    background-color: #ffffff;
+    color: #39344f;
+    border: 1px solid #ddd9eb;
+    border-radius: 10px;
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group select:hover {
+    border-color: #c8bde2;
+}
+
+.form-group select:focus {
+    border-color: #6c4ce8;
+    box-shadow: 0 0 0 3px rgba(108, 76, 232, 0.10);
+}
+
+/* Other Input */
+.other-input-container {
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    background: #faf8ff;
+    border: 1px solid #e2daf1;
+    border-radius: 12px;
+}
+
+.other-input-container label {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px;
+    color: #39344f;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.other-input-container input {
+    display: block;
+    width: 100%;
+    height: 46px;
+    margin: 0;
+    padding: 0 14px;
+    background: #ffffff;
+    color: #39344f;
+    border: 1px solid #ddd9eb;
+    border-radius: 9px;
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.other-input-container input:hover {
+    border-color: #c8bde2;
+}
+
+.other-input-container input:focus {
+    border-color: #6c4ce8;
+    box-shadow: 0 0 0 3px rgba(108, 76, 232, 0.10);
+}
+
+.other-input-container input::placeholder {
+    color: #aaa6b8;
+}
+
+/* Button Area */
+.button-container {
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+}
+
+/* Complete Assessment */
+.submit-button {
+    display: block;
+    width: 100%;
+    height: 52px;
+    margin: 0;
+    padding: 0 20px;
+    background: #6c4ce8;
+    color: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+    background: #5938d0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 76, 232, 0.25);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive - Tablet */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 15px 5%;
+    }
+
+    .assessment-section {
+        padding: 40px 15px 55px;
+    }
+
+    .assessment-heading h1 {
+        font-size: 32px;
+    }
+
+    .assessment-heading p {
+        font-size: 15px;
+    }
+
+    .assessment-card {
+        padding: 30px 25px;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 550px) {
+    .navbar {
+        height: auto;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+
+    .navbar nav {
+        gap: 18px;
+    }
+
+    .navbar nav a {
+        font-size: 13px;
+    }
+
+    .assessment-section {
+        padding: 35px 12px 50px;
+    }
+
+    .assessment-heading h1 {
+        font-size: 28px;
+    }
+
+    .assessment-heading p {
+        font-size: 14px;
+    }
+
+    .assessment-card {
+        padding: 25px 18px;
+        border-radius: 16px;
+    }
+
+    .card-header h2 {
+        font-size: 21px;
+    }
+
+    .form-group select {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .other-input-container {
+        padding: 14px;
+    }
+
+    .other-input-container input {
+        height: 44px;
+    }
+
+    .submit-button {
+        height: 50px;
+        font-size: 15px;
+    }
+}
